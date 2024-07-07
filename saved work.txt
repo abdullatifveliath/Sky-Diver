@@ -1,0 +1,384 @@
+#include "SDL.h"
+#include <iostream>
+#include <conio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <process.h>
+
+//setting up the screen
+SDL_Surface* screen=NULL;
+//background surface
+SDL_Surface* background=NULL;
+//loading player
+SDL_Surface* player=NULL;
+SDL_Surface* crates=NULL;
+SDL_Surface* Menu=NULL;
+SDL_Surface* en0=NULL;
+
+Uint8 *keystates = SDL_GetKeyState( NULL );
+
+SDL_Event event;
+
+#include <string> 
+
+#include <windows.h> 
+
+#include "include/irrKlang.h" 
+
+  
+
+using namespace std; 
+
+using namespace irrklang; 
+
+  
+
+#pragma comment(lib, "irrKlang.lib") 
+
+int main( int argc, char* argv[] )
+{
+
+	en0=SDL_LoadBMP("Game over.bmp");
+	SDL_SetColorKey(en0, SDL_SRCCOLORKEY, SDL_MapRGB(en0->format, 255, 0, 255));
+	SDL_Rect en0po={190,200,289,49};
+	SDL_Rect en0cr={119,135,289,49};
+
+    ISoundEngine* se = createIrrKlangDevice(); 
+
+	ISoundEngine* mi = createIrrKlangDevice(); 
+
+    string soundFile = "midnight-ride.MP3"; 
+
+    int endtimer=0;
+
+    start:
+
+    int randnum;
+    unsigned int seedval;
+    time_t t;
+
+	int ca=0;
+
+    bool gameRunning=true,die=false,menu1=true,che=false;
+
+    int timer=0,exptimer=0,mitimer=0; 
+
+	seedval=(unsigned)time(&t);
+
+	srand(seedval);
+
+	//Start SDL
+    SDL_Init( SDL_INIT_EVERYTHING );
+
+	background=SDL_LoadBMP("background.bmp");
+
+	//Set up screen
+    screen = SDL_SetVideoMode( 640, 480, 32, SDL_SWSURFACE );
+
+	player=SDL_LoadBMP("sky divera.bmp");
+	SDL_SetColorKey(player, SDL_SRCCOLORKEY, SDL_MapRGB(player->format, 255, 0, 255));
+	
+	//Set the window caption
+    SDL_WM_SetCaption( "Sky Diver", NULL );
+    
+    SDL_Rect pos;         
+    pos.x=250;
+    pos.y=200;
+    pos.w=84;
+    pos.h=54;
+
+    SDL_Rect crop;
+    crop.x=3;
+    crop.y=2;
+    crop.h=54;
+    crop.w=84;
+
+	SDL_Rect bgpo={0,0,640,480};
+
+	SDL_Rect bgcr={0,0,640,480};
+
+	SDL_Surface* missile1=NULL;
+	missile1=SDL_LoadBMP("missile.bmp");
+
+	SDL_Rect mipo={600,rand()%640,93,25};
+	SDL_Rect mipo1={0,rand()%640,93,25};
+	SDL_Rect micr1={216,17,93,25};
+	SDL_Rect micr={10,16,93,25};
+	SDL_SetColorKey(missile1, SDL_SRCCOLORKEY, SDL_MapRGB(missile1->format, 255, 0, 255));
+
+	crates=SDL_LoadBMP("crate.bmp");
+	SDL_SetColorKey(crates, SDL_SRCCOLORKEY, SDL_MapRGB(crates->format, 255, 0, 255));
+
+	SDL_Rect crpo={rand()%620+10,0,43,52};
+	SDL_Rect crcr={113,70,43,52};
+
+	SDL_Surface* exp=NULL;
+	exp=SDL_LoadBMP("bomb.bmp");
+	SDL_SetColorKey(exp, SDL_SRCCOLORKEY, SDL_MapRGB(exp->format, 255, 0, 255));
+
+	SDL_Rect excr={33,47,51,34};
+    SDL_Rect expo={0,0,51,34};
+
+	Menu=SDL_LoadBMP("Menu.bmp");
+
+	//The event structure
+    
+	SDL_Rect mipo12={660,280,93,25};
+	SDL_Rect crpo12={300,390,43,52};
+	SDL_Rect crcr12={113,22,43,52};
+
+	while(menu1==true)
+	{
+
+		if(se->isCurrentlyPlaying(soundFile.c_str()))
+		{}
+		else
+		{se->play2D("midnight-ride.MP3");}
+
+		SDL_BlitSurface(Menu,NULL,screen,NULL);
+		SDL_Flip(screen);
+		SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+		//If a key was pressed
+		//If there's an event to handle
+        if( SDL_PollEvent( &event ) )
+        {
+				if (event.type == SDL_QUIT)
+                {
+                    gameRunning = false;
+					menu1=false;
+                }
+            if( event.type == SDL_KEYDOWN )
+            {
+                //Set the proper message surface
+                switch( event.key.keysym.sym )
+                {
+                    case SDLK_RETURN:  menu1=false;
+                }
+            }
+		}
+	}
+
+	while (gameRunning==true)
+    {
+		if(ca==3)
+		{
+en0cr.x=119;
+en0cr.y=135;
+en0cr.w=289;
+en0cr.h=49;
+
+		}
+		if(se->isCurrentlyPlaying(soundFile.c_str()))
+		{}
+		else
+		{se->play2D("midnight-ride.MP3");}
+
+	    if(mitimer<=525)
+	    {mitimer++;}
+     
+	    timer++;
+	    if((die==true)&&(ca<3))
+	    {
+	        exptimer++;
+	    }
+		
+	    if(exptimer==25/2)
+	    {excr.x=259;excr.y=27;excr.w=88;excr.h=69;}
+	    else 
+	    if(exptimer==50/2)
+	    {excr.x=502;excr.y=7;excr.w=99;excr.h=95;}
+	    else 
+	    if(exptimer==75/2)
+	    {excr.x=741;excr.y=7;excr.w=110;excr.h=94;}
+	    else 
+	    if(exptimer==100/2)
+	    {excr.x=999;excr.y=15;excr.w=99;excr.h=84;}
+	    else 
+	    if(exptimer==125/2)
+	    {excr.x=1242;excr.y=19;excr.w=106;excr.h=88;}
+	    else 
+	    if(exptimer==150/2)
+	    {excr.x=1507;excr.y=27;excr.w=89;excr.h=68;}
+	    else 
+	    if(exptimer==(150/2)+10)
+	    {excr.x=0;excr.y=0;excr.w=0;excr.h=0;}
+		else 
+	    if(exptimer==300)
+		{goto start;}
+	 
+	    if(timer>=1150)
+	       {
+	          if(crcr.y!=18)
+	             {
+                    crcr.y-=1;
+	             }
+	          else
+	             {
+	                crpo.y+=1; 
+	             }
+	       }	 
+
+        randnum=(rand()%480)+0;
+
+		
+        if (SDL_PollEvent(&event))
+        {
+           if (event.type == SDL_QUIT)
+           {
+              gameRunning = false;
+           }
+        }
+	    if( keystates[ SDLK_LEFT ] )
+        {
+ 	        pos.x-=1.5;
+        }
+		if(die==false)
+		{
+            if( keystates[ SDLK_RIGHT ] )
+        {
+			if(pos.x<=560)
+			{
+            pos.x+=2;
+			}
+        }
+
+        if( keystates[ SDLK_UP ] )
+        {
+
+            pos.y-=1.5;
+
+        }
+
+        if( keystates[ SDLK_DOWN ] )
+        {
+			if(pos.y<=440)
+			{
+         pos.y+=2;
+			}
+        }
+	    }
+        
+	    
+  		SDL_BlitSurface(background,&bgcr,screen,&bgpo);
+		if(die==false)
+		{
+		    SDL_BlitSurface(player,&crop,screen,&pos);
+		}
+		SDL_BlitSurface(missile1,&micr,screen,&mipo);
+		if(mitimer>=525)
+		{
+		SDL_BlitSurface(missile1,&micr1,screen,&mipo1);
+		}
+		SDL_BlitSurface(crates,&crcr,screen,&crpo);
+		if(ca>2)
+		{
+        che=true;
+		SDL_BlitSurface(en0,&en0cr,screen,&en0po);
+		}
+		if(ca==3)
+		{
+	    endtimer++;
+		if(endtimer==500)
+		{
+			goto start;
+		}
+		}
+		if((die==true)&&(che==false))
+		{
+			en0cr.x=132;
+            en0cr.y=246;
+			en0cr.w=277;
+			en0cr.h=48;
+		    SDL_BlitSurface(exp,&excr,screen,&expo);
+			SDL_BlitSurface(en0,&en0cr,screen,&en0po);
+		}
+		SDL_Flip( screen );
+		SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
+		bgcr.y+=1;
+		if(mipo.x!=0)
+		{
+		  mipo.x-=2.75;		
+		}
+		else
+		{
+			mipo.x=600;
+			mipo.y=randnum;
+		}
+		if(mitimer>=525)
+		{
+		    if(mipo1.x!=648)
+		{
+		    mipo1.x+=2.75;		
+		}
+		else
+		{
+			mipo1.x=0;
+			mipo1.y=rand()%460+10;
+		}
+		}
+		if(bgcr.y==480)
+		{
+
+			bgcr.y=0;
+        
+		}
+		if(mipo.x!=0)
+		{
+		if(die==false)
+		{
+		 if((((pos.x<=mipo.x)&&(pos.x+pos.w>=mipo.x)&&(pos.y<=mipo.y+(mipo.h/2))&&(pos.y+pos.h>=mipo.y+(mipo.h/2))))&&(ca<3))      
+		 {
+            mi->play2D("explosion-01.MP3");
+			expo.x=pos.x;
+			expo.y=pos.y;
+			die=true;
+		 }
+		}
+		}
+		if(mipo1.x!=0)
+		{
+		if(die==false)
+		{
+		if((((pos.x<=mipo1.x+mipo1.w)&&(pos.x+pos.w>=mipo1.x+mipo1.w)&&(pos.y<=mipo1.y+(mipo1.h/2))&&(pos.y+pos.h>=mipo1.y+(mipo1.h/2))))&&(ca<3))      
+	    {
+            mi->play2D("explosion-01.MP3");
+			expo.x=pos.x;
+			expo.y=pos.y;
+			die=true;
+		}
+		}
+		}
+		if(((pos.x<=crpo.x+(crpo.w/2))&&(pos.x+pos.w>=crpo.x+(crpo.w/2))&&(pos.y<=crpo.y+(crpo.h/2))&&(pos.y+pos.h>=crpo.y+(crpo.h/2)))&&(die==false))
+		{
+			ca++;	
+			timer=0;
+            crpo.x=rand()%620+10;
+			crpo.y=0;
+			crpo.w=43;
+			crpo.h=52;
+			crcr.x=113;
+			crcr.y=70;
+			crcr.w=43;
+			crcr.h=52;
+
+		}
+
+
+		
+    }
+    
+	mi->drop();
+    se->drop();
+	SDL_FreeSurface( player );
+	SDL_FreeSurface( en0 );
+	SDL_FreeSurface( background );
+	SDL_FreeSurface( missile1 );
+	SDL_FreeSurface( crates );
+	SDL_FreeSurface( exp );
+	SDL_FreeSurface( Menu );
+
+
+
+	SDL_Quit();
+    return 0;
+}
